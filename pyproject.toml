@@ -11,6 +11,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
 cadquery = { git = "https://github.com/CadQuery/cadquery", python = ">= 3.9" }
+pymupdf = ">= 1.24"
 
 [tool.poetry.scripts]
 pcb-jigify = "pcb_jigify.cli:main"
