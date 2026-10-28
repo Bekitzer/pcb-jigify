@@ -78,6 +78,46 @@ pcb-jigify holding \
     pcb-Edge_Cuts.dxf
 ```
 
+#### PCBA STEP, drill DXF and drill PDF
+Besides KiCad and DXF, the board can be given as a PCBA STEP file (Z-up, as exported by KiCad, Altium and others):
+
+```sh
+pcb-jigify holding --output holder.step pcba.step
+```
+
+The bare board is picked out of the assembly, so the outline, the PCB thickness (unless `--pcb-thickness` is passed) and
+all round holes are taken from the model. Components are ignored.
+
+Drills can be used as registration features without any marker layer. First, see which diameters are available:
+
+```sh
+pcb-jigify drills pcba.step
+# 1 mm: 2
+# 3.2 mm: 4
+```
+
+Then pick one for the registration features:
+
+```sh
+pcb-jigify holding \
+    --registration-drill-diameter 3.2 --registration-depth 2 \
+    --output holder.step pcba.step
+```
+
+Drills can also come from a separate source with `--drills`:
+
+* **DXF**: circles are read as holes. The file has to share its origin with the outline (as KiCad's multi-layer export does).
+* **PDF**: a vector PDF drill drawing, with holes drawn as circles. The board edge must be on the drawing too, as it's used
+  to find the board's position and scale on the page. If the scale can't be deduced, pass `--drills-pdf-scale` (2 for a 2:1 drawing).
+* **STEP**: the holes of another STEP file.
+
+```sh
+pcb-jigify holding --drills drills.pdf --registration-drill-diameter 3.2 --registration-depth 2 \
+    --output holder.step pcb-Edge_Cuts.dxf
+```
+
+Matching is done to within `--registration-drill-tolerance` (default 0.05 mm). Scanned or raster PDFs are not supported.
+
 ### Testing jigs
 
 Testing jigs utilizing pogo pins can be generated in a similar fashion.
